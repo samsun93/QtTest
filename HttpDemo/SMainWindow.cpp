@@ -3,6 +3,7 @@
 #include <QNetworkAccessManager>
 #include <QTimer>
 #include <QNetworkReply>
+#include"QReplyTimeout.h"
 SMainWindow::SMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::SMainWindow)
@@ -17,8 +18,9 @@ SMainWindow::~SMainWindow()
 
 void SMainWindow::on_pushButton_clicked()
 {
+    /*
     QTimer timer;
-    timer.setInterval(30);  // 设置超时时间 30 秒
+    timer.setInterval(3000);  // 设置超时时间 30 秒
     timer.setSingleShot(true);  // 单次触发
 
     // 请求 Qt 官网
@@ -67,4 +69,13 @@ void SMainWindow::on_pushButton_clicked()
         qDebug() << "Timeout";
          ui->textEdit->append("Timeout");
     }
+    */
+    //使用超时请求类
+    QNetworkAccessManager *pManger = new QNetworkAccessManager(this);
+    QNetworkReply *pReply = pManger->get(QNetworkRequest(QUrl("https://www.google.com")));
+    QReplyTimeout *pTimeout = new QReplyTimeout(pReply, 1000);
+    // 超时进一步处理
+    connect(pTimeout, &QReplyTimeout::timeout, [=]() {
+        qDebug() << "Timeout";
+    });
 }
